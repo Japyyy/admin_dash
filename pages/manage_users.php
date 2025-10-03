@@ -47,6 +47,7 @@ $result = $conn->query($sql);
                                 <option value="Customer" <?= $row['role'] == 'Customer' ? 'selected' : '' ?>>Customer</option>
                                 <option value="Staff" <?= $row['role'] == 'Staff' ? 'selected' : '' ?>>Staff</option>
                                 <option value="Admin" <?= $row['role'] == 'Admin' ? 'selected' : '' ?>>Admin</option>
+                                <option value="Owner" <?= $row['role'] == 'Owner' ? 'selected' : '' ?>>Owner</option>
                             </select>
                             <button type="submit" class="btn update-btn">Update</button>
                         </form>

@@ -11,16 +11,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address    = $_POST['address'];
     $contact    = $_POST['contact'];
 
-    $stmt = $conn->prepare("INSERT INTO users 
-        (username, email, password, first_name, last_name, dob, address, contact, created_at, role, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'Owner', 'Active')");
-    $stmt->bind_param("ssssssss", $username, $email, $password, $first_name, $last_name, $dob, $address, $contact);
+    $check = $conn->prepare("SELECT userID FROM users WHERE username = ?");
+    $check->bind_param("s", $username);
+    $check->execute();
+    $check->store_result();
 
-    if ($stmt->execute()) {
-        echo "<script>alert('✅ Owner account created successfully!'); window.location.href='admindashboard.php?page=manage_users';</script>";
+    if ($check->num_rows > 0) {
+        echo "<script>alert('⚠️ Username already exists. Please choose another one.');</script>";
     } else {
-        echo "<script>alert('❌ Error creating owner account. Please try again.');</script>";
+        // ✅ Step 2: Insert new owner
+        $stmt = $conn->prepare("INSERT INTO users 
+            (username, email, password, first_name, last_name, dob, address, contact, created_at, role, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'Owner', 'Active')");
+        $stmt->bind_param("ssssssss", $username, $email, $password, $first_name, $last_name, $dob, $address, $contact);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('✅ Owner account created successfully!'); window.location.href='admindashboard.php?page=manage_users';</script>";
+        } else {
+            echo "<script>alert('❌ Error creating owner account: " . addslashes($stmt->error) . "');</script>";
+        }
     }
+
 }
 ?>
 
